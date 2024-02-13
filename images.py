@@ -1,16 +1,17 @@
+import logging
+
 import requests
 
 
-def get_random_image():
-    """Получает список случайных картинок лис.
-    """
-
+def get_random_image() -> str:
+    """Получает случайную картинку лис"""
     url = "https://randomfox.ca/floof"
     response = requests.get(url=url)
     response.raise_for_status()
+    logging.debug(response.status_code)
     response = response.json()
+    return response["image"]
 
-    images_foxes = []
-    random_image_url = response['image']
-    images_foxes.append(random_image_url)
-    return images_foxes
+
+if __name__ == "__main__":
+    get_random_image()
