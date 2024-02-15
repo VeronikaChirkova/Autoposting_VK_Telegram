@@ -6,12 +6,19 @@ import telebot
 from dotenv import load_dotenv
 
 from images import get_random_image
+from VK_API import (
+    get_server_address,
+    transfer_image_server,
+    save_photo_on_server,
+    publish_image_vk,
+)
 
 load_dotenv()
 
 token = os.getenv("TOKEN_BOT")
 chat_id = os.getenv("CHANNEL_ID")
 DAY = 86400
+
 
 def publish_images(token: str, chat_id: str, interval: int):
     """Публикует картинки в телеграм канал
@@ -34,7 +41,14 @@ def check_env() -> bool:
         readed_file = file.read()
         res = readed_file.split("\n")
 
-    checked_variables = ["TOKEN_BOT", "CHANNEL_ID"]
+    checked_variables = [
+        "TOKEN_BOT",
+        "CHANNEL_ID",
+        "CLIENT_ID",
+        "ACCESS_TOKEN",
+        "GROUP_ID",
+        "ALBUM_ID",
+    ]
     res_keys = [res_str.split("=")[0] for res_str in res if len(res_str) > 1]
     for key in checked_variables:
         if not key in res_keys:
@@ -52,10 +66,7 @@ def main():
         level=logging.DEBUG if os.getenv("DEV") else logging.WARNING,
         format="%(asctime)s - %(levelname)s - %(funcName)s: %(lineno)d - %(message)s",
         datefmt="%d-%b-%y %H:%M:%S",
-        handlers=[
-        logging.FileHandler("debug.log"),
-        logging.StreamHandler()
-    ]
+        handlers=[logging.FileHandler("debug.log"), logging.StreamHandler()],
     )
 
     if not check_env():
@@ -63,6 +74,12 @@ def main():
         logging.critical(msg)
         raise ValueError(msg)
 
+    server_address = get_server_address()
+    server, photo, hash_vk = transfer_image_server(server_address)
+    photo_id, owner_id = save_photo_on_server(
+        server=server, photo=photo, hash_vk=hash_vk
+    )
+    publish_image_vk(photo_id=photo_id, owner_id=owner_id)
     publish_images(token=token, chat_id=chat_id, interval=DAY)  # type:ignore
 
 
