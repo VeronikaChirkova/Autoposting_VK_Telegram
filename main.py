@@ -47,7 +47,6 @@ def check_env() -> bool:
         "CLIENT_ID",
         "ACCESS_TOKEN",
         "GROUP_ID",
-        "ALBUM_ID",
     ]
     res_keys = [res_str.split("=")[0] for res_str in res if len(res_str) > 1]
     for key in checked_variables:

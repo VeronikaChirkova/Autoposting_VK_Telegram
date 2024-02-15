@@ -10,13 +10,12 @@ load_dotenv()
 
 
 def get_server_address() -> str:
-    """Получает адрес сервера для загрузки фотографии на стену сообщества."""
+    """Получает адрес сервера для загрузки картинки на стену сообщества"""
     url = "https://api.vk.com/method/photos.getWallUploadServer"
     params = {
         "access_token": os.getenv("ACCESS_TOKEN"),
         "v": "5.131",
         "group_id": os.getenv("GROUP_ID"),
-        "album_id": os.getenv("ALBUM_ID"),
     }
     response = requests.get(url=url, params=params)
     response.raise_for_status()

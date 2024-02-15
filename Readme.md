@@ -1,7 +1,7 @@
 # Автопостинг картинок в телеграм и VK
 1. Скачайте проект:<br>
 ```bash
-git clone
+git clone https://github.com/VeronikaChirkova/Autoposting_VK_Telegram.git
 ```
 2. Создайте вртуальное окружение:<br>
 ```bash
@@ -23,8 +23,8 @@ pip install -r requirements.txt
 
 ## Вконтакте
 1. Создайте сообщество в Вконтакте.<br>
-2. id сообщества `GROUP_ID` зять из адресной строки браузера и сохранить в файл `.env`.<br>
-3. На [dev.vk.com](https://dev.vk.com/) создать `Standelone-приложение`.<br>
+2. id сообщества `GROUP_ID` взять из адресной строки браузера и сохранить в файл `.env`.<br>
+3. На [dev.vk.com](https://dev.vk.com/) создать `Standelone-приложение` (платформа Web).<br>
 4. id приложения `CLIENT_ID` сохранить в файл `.env`.<br>
 5. В приложении во вкладке **Доступы** заполнить паспортные данные и отправить на проверку. После проверки запросить расширенные доступы: *Стена, Сообщества, Фотографии*.<br>
 6. Для получения токена доступа к API ВК вставьте `CLIENT_ID` в URL:
@@ -36,12 +36,13 @@ https://oauth.vk.com/authorize?client_id=CLIENT_ID&redirect_uri=https://oauth.vk
 ### Файл .env:
 Переменные, необходимые для работы:<br>
 ```text
-TOKEN_BOT=
-CHANNEL_ID=
-DEV=
-CLIENT_ID=
-ACCESS_TOKEN=
-GROUP_ID=
+TOKEN_BOT=your_telegram_bot_token
+CHANNEL_ID=your_channel_id
+DEV=True/False
+CLIENT_ID=your_app_id
+ACCESS_TOKEN=your_access_token
+GROUP_ID=your_group_id
+
 ```
 `DEV` - отвечает за уровень логирования. В ручную выставить значение True/False.<br>
 `DEV=True` - в файл debug.log будут записываться логи с уровнем DEBUG и выше.<br>
