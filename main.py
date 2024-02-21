@@ -1,3 +1,4 @@
+from email.mime import image
 import logging
 import os
 import time
@@ -6,11 +7,11 @@ import telebot
 from dotenv import load_dotenv
 
 from images import get_random_image
-from VK_API import (
+from vk_api import (
     get_server_address,
-    transfer_image_server,
-    save_photo_on_server,
     publish_image_vk,
+    save_photo_on_server,
+    transfer_image_server,
 )
 
 load_dotenv()
@@ -18,6 +19,7 @@ load_dotenv()
 token = os.getenv("TOKEN_BOT")
 chat_id = os.getenv("CHANNEL_ID")
 DAY = 86400
+image = get_random_image()
 
 
 def publish_images(token: str, chat_id: str, interval: int):
@@ -30,7 +32,6 @@ def publish_images(token: str, chat_id: str, interval: int):
     """
     bot = telebot.TeleBot(token=token)
     while True:
-        image = get_random_image()
         bot.send_photo(chat_id=chat_id, photo=image)
         time.sleep(interval)
 
