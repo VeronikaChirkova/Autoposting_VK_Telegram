@@ -9,7 +9,7 @@ python -m venv venv
 ```
 3. Активируйте виртуальное окружение:<br>
 ```bash
-.\venv\Scripts\activate
+../venv/bin/activate
 ```
 4. Установите зависимости:<br>
 ```bash
@@ -42,8 +42,47 @@ DEV=True/False
 CLIENT_ID=your_app_id
 ACCESS_TOKEN=your_access_token
 GROUP_ID=your_group_id
-
 ```
 `DEV` - отвечает за уровень логирования. В ручную выставить значение True/False.<br>
 `DEV=True` - в файл debug.log будут записываться логи с уровнем DEBUG и выше.<br>
 `DEV=False` - в файл debug.log будут записываться логи с уровнем WARNING и выше.<br>
+
+5. Запустите скрипт `main.py`
+
+## Запуск в докере
+1. Создайте нового пользователя `appuser` без домашней директории и добавьте его в группу `appuser` на локальном ПК.<br>
+
+```bash
+sudo useradd -M appuser -u 3000 -g 3000 && sudo usermod -L appuser && sudo usermod -aG appuser appuser
+```
+Это необходимо для обеспечения безопасности, чтобы запуск процессов внутри контейнера осуществлялся от пользователя, который не имеет никаких прав на хостовой машине.<br>
+
+UID (GID) пользователя в контейнере и пользователя за пределами контейнера, у которого есть соответствующие права на доступ к файлу, должны соответствовать.<br>
+
+2. В Dockerfile необходимо прописать: UID (GID), создание пользователя и передачу ему прав, смену пользователя.<br>
+```text
+ARG UNAME=appuser
+ARG UID
+ARG GID
+
+# create user
+RUN groupadd -g ${GID} ${UNAME} &&\
+useradd ${UNAME} -u ${UID} -g ${GID} &&\
+usermod -L ${UNAME} &&\
+usermod -aG ${UNAME} ${UNAME}
+
+# chown all the files to the app user
+RUN chown -R ${UNAME}:${UNAME} /app
+
+USER ${UNAME}
+```
+3. Команда для создания образа (обязательно указать UID (GID)):<br>
+
+```bash
+docker build . --build-arg UID=3000 --build-arg GID=3000 -f Dockerfile -t autopost
+```
+4. Создайте и запустите контейнер:<br>
+```bash
+docker run --rm --name autopost --env-file /secret/autoposting_vk_telegram/.env autopost
+```
+Файл с конфиденциальными данными передается `--env-file`.<br>

@@ -6,7 +6,7 @@ import requests
 def get_random_image() -> bytes:
     """Получает случайную картинку лис"""
     url = "https://randomfox.ca/floof"
-    response = requests.get(url=url)
+    response = requests.get(url=url, verify=False)
     response.raise_for_status()
     logging.debug(response.status_code)
     response = response.json()

@@ -13,21 +13,22 @@ from vk_api import (
     transfer_image_server,
 )
 
+# ide run
 load_dotenv()
 
 token = os.getenv("TOKEN_BOT")
 chat_id = os.getenv("CHANNEL_ID")
 DAY = 86400
-image = get_random_image()
 
 
-def publish_images(token: str, chat_id: str, interval: int):
+def publish_images(token: str, chat_id: str, interval: int, image: bytes):
     """Публикует картинки в телеграм канал
 
     Args:
         token (str): токен телеграм бота
         chat_id (str): уникальный идентификатор целевого чата или имя пользователя целевого канала (в формате @channelusername)
         interval (int): интервал между публикациями картинок в секундах
+        image (bytes): картинка для загрузки в сервисы
     """
     bot = telebot.TeleBot(token=token)
     while True:
@@ -36,11 +37,10 @@ def publish_images(token: str, chat_id: str, interval: int):
 
 
 def check_env() -> bool:
-    """Проверка переменныъх в .env"""
-    with open(".env", "r") as file:
-        readed_file = file.read()
-        res = readed_file.split("\n")
+    """Проверка переменныъхv в .env
 
+    --env-file .env
+    """
     checked_variables = [
         "TOKEN_BOT",
         "CHANNEL_ID",
@@ -48,15 +48,10 @@ def check_env() -> bool:
         "ACCESS_TOKEN",
         "GROUP_ID",
     ]
-    res_keys = [res_str.split("=")[0] for res_str in res if len(res_str) > 1]
-    for key in checked_variables:
-        if not key in res_keys:
+    for env_var in checked_variables:
+        token = os.getenv(env_var)
+        if token is None:
             return False
-        for env_str in res:
-            splitted_str = env_str.split("=")
-            if key == splitted_str[0]:
-                if len(splitted_str) < 2:
-                    return False
     return True
 
 
@@ -73,13 +68,17 @@ def main():
         logging.critical(msg)
         raise ValueError(msg)
 
+    image = get_random_image()
+
     server_address = get_server_address()
     server, photo, hash_vk = transfer_image_server(server_address)
     photo_id, owner_id = save_photo_on_server(
         server=server, photo=photo, hash_vk=hash_vk
     )
     publish_image_vk(photo_id=photo_id, owner_id=owner_id)
-    publish_images(token=token, chat_id=chat_id, interval=DAY)  # type:ignore
+    publish_images(
+        token=token, chat_id=chat_id, interval=DAY, image=image  # type:ignore
+    )
 
 
 if __name__ == "__main__":
