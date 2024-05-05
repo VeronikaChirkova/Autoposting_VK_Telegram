@@ -9,7 +9,7 @@ python -m venv venv
 ```
 3. Активируйте виртуальное окружение:<br>
 ```bash
-../venv/bin/activate
+. ./venv/bin/activate
 ```
 4. Установите зависимости:<br>
 ```bash
@@ -77,7 +77,6 @@ RUN chown -R ${UNAME}:${UNAME} /app
 USER ${UNAME}
 ```
 3. Команда для создания образа (обязательно указать UID (GID)):<br>
-
 ```bash
 docker build . --build-arg UID=3000 --build-arg GID=3000 -f Dockerfile -t autopost
 ```

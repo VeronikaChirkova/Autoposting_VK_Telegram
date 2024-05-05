@@ -7,4 +7,4 @@ services:
     container_name: autopost
     env_file:
       - .env
-    restart: no
+    restart: "no"
